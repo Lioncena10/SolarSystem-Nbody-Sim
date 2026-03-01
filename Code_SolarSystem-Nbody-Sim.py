@@ -10,18 +10,28 @@ ruta_guardado = r"C:\Users\maced\OneDrive\Documents\Licenciatura en Física\4to 
 
 plt.style.use('default') # estilo académico para las gráficas
 
+plt.rcParams.update({
+    'font.size': 16,          # Tamaño de texto general
+    'axes.titlesize': 20,     # Tamaño del título de la gráfica
+    'axes.labelsize': 18,     # Tamaño de las etiquetas de los ejes (Posición X, Y)
+    'xtick.labelsize': 14,    # Tamaño de los numeritos del eje X
+    'ytick.labelsize': 14,    # Tamaño de los numeritos del eje Y
+    'legend.fontsize': 16,    # Tamaño de la caja de leyenda
+    'figure.titlesize': 22
+})
+
 # Listas de referencia para gráficas y prints
 nombres_planetas = ["Sol", "Mercurio", "Venus", "Tierra", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno"]
 colores_planetas = [
-    '#DAA520', # Sol
-    '#778899', # Mercurio 
-    '#B8860B', # Venus
-    '#0000CD', # Tierra 
-    '#DC143C', # Marte
-    '#FF8C00', # Júpiter 
-    '#CD853F', # Saturno 
-    '#008B8B', # Urano 
-    '#00008B'  # Neptuno
+    '#FFD700', # Sol (Dorado brillante)
+    '#808080', # Mercurio (Gris)
+    '#FF8C00', # Venus (Naranja vibrante)
+    '#32CD32', # Tierra (Verde lima)
+    '#DC143C', # Marte (Rojo carmesí)
+    '#8B4513', # Júpiter (Café / Marrón)
+    '#9370DB', # Saturno (Morado / Púrpura - contraste total)
+    '#008B8B', # Urano (Verde azulado - intacto)
+    '#00008B'  # Neptuno (Azul oscuro - intacto)
 ]
 
 # =============================================================================
@@ -340,11 +350,10 @@ for barra in barras:
 
 plt.axhline(y=1.0, color='magenta', linestyle='--', linewidth=2, label='Umbral: 1%') # umbral del 1%
 
-plt.title('Error Relativo en las Posiciones Finales de los Planetas y el Sol (1965)', fontsize=16, fontweight='bold')
-plt.ylabel('Error relativo (%)', fontsize=12)
+plt.title('Error Relativo en las Posiciones Finales de los Planetas y el Sol (1965)', fontweight='bold')
+plt.ylabel('Error relativo (%)')
 plt.grid(axis='y', linestyle='--', alpha=0.5)
-plt.tick_params(labelsize=10) # tamaño de los numeritos (ticks)
-plt.legend(loc='upper right', fontsize='small', frameon=True, facecolor='white', edgecolor='lightgray')
+plt.legend(loc='upper right', frameon=True, facecolor='white', edgecolor='lightgray')
 plt.tight_layout()
 
 plt.savefig(os.path.join(ruta_guardado, "error_simulacion_posición_final.png"), dpi=300, bbox_inches='tight')
@@ -368,12 +377,11 @@ año_max = tiempo_desviación[id_max]
 max_label = f'Desviación máx.: {max_desv:.2e} m\nAño: {año_max:.0f}'
 plt.plot(año_max, max_desv, 'ro', markersize=8, markeredgecolor='black', label=max_label)
 
-plt.title('Desviación de la Posición de Urano inducida por Neptuno', fontsize=16, fontweight='bold')
-plt.xlabel('Año', fontsize=12)
-plt.ylabel('Distancia (m)', fontsize=12)
+plt.title('Desviación de la Posición de Urano inducida por Neptuno', fontweight='bold')
+plt.xlabel('Año')
+plt.ylabel('Distancia (m)')
 plt.grid(color='lightgray', linestyle='--', linewidth=0.5)
-plt.tick_params(labelsize=10)
-plt.legend(loc='best', fontsize='small', frameon=True, facecolor='white', edgecolor='lightgray')
+plt.legend(loc='best', frameon=True, facecolor='white', edgecolor='lightgray')
 plt.tight_layout()
 
 plt.savefig(os.path.join(ruta_guardado, "desviacion_urano.png"), dpi=300, bbox_inches='tight')
@@ -400,12 +408,22 @@ for i in range(len(colores_planetas)):
     # posición final (el planeta en 1965)
     plt.plot(x[-1], y[-1], 'o', color=colores_planetas[i], markersize=size)
 
-plt.title(f'Trayectorias Orbitales del Sistema Solar (1800 - 1965)', fontsize=16, fontweight='bold')
-plt.xlabel('Posición X (m)', fontsize=12)
-plt.ylabel('Posición Y (m)', fontsize=12)
+plt.title(f'Trayectorias Orbitales del Sistema Solar (1800 - 1965)', fontweight='bold')
+plt.xlabel('Posición X (m)')
+plt.ylabel('Posición Y (m)')
 plt.gca().set_aspect('equal') # mantiene proporción 1:1 en los ejes (evitar distorsión); gca(): get current axis
-plt.tick_params(labelsize=10)
-plt.legend(loc='upper right', fontsize='small', frameon=True, facecolor='white', edgecolor='lightgray')
+
+limite = 5.5e12 
+plt.xlim(-limite, limite)
+plt.ylim(-limite, limite)
+
+# Crear la leyenda y guardarla en la variable 'leg'
+leg = plt.legend(loc='upper right', frameon=True, facecolor='white', edgecolor='lightgray')
+
+# Engrosar exclusivamente las líneas de muestra adentro de la leyenda
+for line in leg.get_lines():
+    line.set_linewidth(3.0)
+
 plt.grid(color='lightgray', linestyle='--', linewidth=0.5)
 plt.tight_layout()
 
@@ -432,17 +450,16 @@ for i in range(5):
     # posición final (el planeta en 1965)
     plt.plot(x[-1], y[-1], 'o', color=colores_planetas[i], markersize=marker)
 
-plt.title('Órbitas de los Planetas Interiores y el Sol (1800 - 1965)', fontsize=16, fontweight='bold')
-plt.xlabel('Posición X (m)', fontsize=12)
-plt.ylabel('Posición Y (m)', fontsize=12)
+plt.title('Órbitas de los Planetas Interiores y el Sol (1800 - 1965)', fontweight='bold')
+plt.xlabel('Posición X (m)')
+plt.ylabel('Posición Y (m)')
 plt.gca().set_aspect('equal')
-plt.tick_params(labelsize=10)
 
 limite = 2.8e11
 plt.xlim(-limite, limite)
 plt.ylim(-limite, limite)
 
-plt.legend(loc='upper right', fontsize='small', frameon=True, facecolor='white', edgecolor='lightgray')
+plt.legend(loc='upper right', frameon=True, facecolor='white', edgecolor='lightgray')
 plt.grid(color='lightgray', linestyle='--', linewidth=0.5)
 plt.tight_layout()
 
@@ -458,7 +475,7 @@ plt.figure(figsize=(10, 8))
 # mapa de colores (cmap) para representar el paso del tiempo
 plt.scatter(x_relativo, y_relativo, c=tiempo_desviación, cmap='plasma', s=10, alpha=1.0, label='Trayectoria')
 cbar = plt.colorbar() # crear la barra de color lateral 
-cbar.set_label('Año', fontsize=12)
+cbar.set_label('Año', fontsize=18)
 
 # inicio (1800)
 plt.plot(x_relativo[0], y_relativo[0], 'ro', markersize=10, markeredgecolor='black', label='Inicio (1800)')
@@ -475,13 +492,13 @@ plt.text(x_relativo[idx_1846], y_relativo[idx_1846], '1846   ', fontsize=10, fon
 plt.plot(x_relativo[-1], y_relativo[-1], 'rX', markersize=10, markeredgecolor='black', label='Final (1965)')
 plt.text(x_relativo[-1], y_relativo[-1], '1965   ', fontsize=10, fontweight='bold', ha='right', va='top')
 
-plt.title('Movimiento Relativo de Urano respecto a su Órbita sin Neptuno', fontsize=16, fontweight='bold')
-plt.xlabel('Desplazamiento en X (m)', fontsize=12)
-plt.ylabel('Desplazamiento en Y (m)', fontsize=12)
+plt.title('Movimiento Relativo de Urano respecto a su Órbita sin Neptuno', fontweight='bold')
+plt.xlabel('Desplazamiento en X (m)')
+plt.ylabel('Desplazamiento en Y (m)')
 plt.axhline(0, color='gray', linestyle=':', alpha=0.8)
 plt.axvline(0, color='gray', linestyle=':', alpha=0.8)
 plt.grid(color='lightgray', linestyle='--', linewidth=0.5)
-plt.legend(loc='upper left', fontsize='small', frameon=True, facecolor='white', edgecolor='lightgray')
+plt.legend(loc='upper left', frameon=True, facecolor='white', edgecolor='lightgray')
 plt.axis('equal')
 plt.tight_layout()
 
