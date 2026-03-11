@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap, BoundaryNorm
 import os
 
 # =============================================================================
 # 1. CONFIGURACIÓN GENERAL Y RUTAS
 # =============================================================================
 
-ruta_guardado = r"C:\Users\maced\OneDrive\Documents\Licenciatura en Física\4to semestre\Proyecto Modular I"
+ruta_guardado = r"C:\Users\maced\OneDrive\Documents\Licenciatura_Fisica\4to-semestre\Proyecto Modular I"
 
 plt.style.use('default') # estilo académico para las gráficas
 
@@ -472,26 +473,46 @@ plt.show()
 
 plt.figure(figsize=(10, 8))
 
-# mapa de colores (cmap) para representar el paso del tiempo
-plt.scatter(x_relativo, y_relativo, c=tiempo_desviación, cmap='plasma', s=10, alpha=1.0, label='Trayectoria')
-cbar = plt.colorbar() # crear la barra de color lateral 
+# --- 1. Configuración de colores discretos ---
+# Intervalos de 25 años
+boundaries = [1800, 1825, 1850, 1875, 1900, 1925, 1950, 1965]
+
+# Colores de los intervalos
+colores_discretos = ['#228B22', '#DC143C', '#0000CD', '#FF8C00', '#00CED1', '#9400D3', '#FF00FF']
+cmap_discrete = ListedColormap(colores_discretos)
+
+# BoundaryNorm fuerza a que los valores caigan dentro de estos "cajones" de color
+norm = BoundaryNorm(boundaries, cmap_discrete.N)
+
+# --- 2. Gráfica ---
+plt.scatter(x_relativo, y_relativo, c=tiempo_desviación, cmap=cmap_discrete, norm=norm, s=10, alpha=1.0, label='Trayectoria')
+
+# --- 3. Barra de color ---
+cbar = plt.colorbar(ticks=boundaries) 
 cbar.set_label('Año', fontsize=18)
 
+# Etiquetas centradas en cada bloque de color ("1800-1825")
+etiquetas_cbar = [f'{boundaries[i]}-{boundaries[i+1]}' for i in range(len(boundaries)-1)]
+ticks_centrados = [(boundaries[i] + boundaries[i+1])/2 for i in range(len(boundaries)-1)]
+cbar.set_ticks(ticks_centrados)
+cbar.set_ticklabels(etiquetas_cbar)
+cbar.ax.tick_params(length=0)
+
+# --- 4. Marcadores ---
 # inicio (1800)
-plt.plot(x_relativo[0], y_relativo[0], 'ro', markersize=10, markeredgecolor='black', label='Inicio (1800)')
+plt.plot(x_relativo[0], y_relativo[0], 'o', color='yellow', markersize=10, markeredgecolor='black', label='Inicio (1800)')
 plt.text(x_relativo[0], y_relativo[0], '   1800', fontsize=10, fontweight='bold', ha='left', va='center')
 
 # año del descubrimiento de Neptuno (1846)
-idx_1846 = np.abs(tiempo_desviación - 1846).argmin() # buscamos el índice más cercano a 1846
-plt.plot(x_relativo[idx_1846], y_relativo[idx_1846], 'r*', markersize=16, markeredgecolor='black',
-         label='Descubrimiento (1846)')
-plt.text(x_relativo[idx_1846], y_relativo[idx_1846], '1846   ', fontsize=10, fontweight='bold',
-         ha='right', va='top')
+idx_1846 = np.abs(tiempo_desviación - 1846).argmin() 
+plt.plot(x_relativo[idx_1846], y_relativo[idx_1846], '*', color='yellow', markersize=16, markeredgecolor='black', label='Descubrimiento (1846)')
+plt.text(x_relativo[idx_1846], y_relativo[idx_1846], '1846   ', fontsize=10, fontweight='bold', ha='right', va='top')
 
 # final (1965)
-plt.plot(x_relativo[-1], y_relativo[-1], 'rX', markersize=10, markeredgecolor='black', label='Final (1965)')
+plt.plot(x_relativo[-1], y_relativo[-1], 'X', color='yellow', markersize=10, markeredgecolor='black', label='Final (1965)')
 plt.text(x_relativo[-1], y_relativo[-1], '1965   ', fontsize=10, fontweight='bold', ha='right', va='top')
 
+# --- 5. Formato ---
 plt.title('Movimiento Relativo de Urano respecto a su Órbita sin Neptuno', fontweight='bold')
 plt.xlabel('Desplazamiento en X (m)')
 plt.ylabel('Desplazamiento en Y (m)')
